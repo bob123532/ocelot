@@ -607,6 +607,8 @@ std::string worker::update(std::map<std::string, std::string> &params) {
 		}
 	} else if(params["action"] == "add_torrent") {
 		torrent t;
+		//This should fix the issue where torrents are initially given double seed status
+		t.double_seed=false;
 		t.id = strtolong(params["id"]);
 		std::string info_hash = params["info_hash"];
 		info_hash = hex_decode(info_hash);
@@ -693,7 +695,7 @@ std::string worker::update(std::map<std::string, std::string> &params) {
                 // Find the torrent.
                 if (torrent_it != torrents_list.end()) {
                         std::map<int, slots_t>::iterator sit = torrent_it->second.tokened_users.find(user_id);
-                        // The user already have a slot, update
+                        // The user already have a slot, update and mark the torrent as double seed
                         if (sit != torrent_it->second.tokened_users.end()) {
                             sit->second.double_seed = time;
                         } else {
